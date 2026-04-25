@@ -12,7 +12,7 @@
     <div class="floating-particles" id="particles"></div>
     
     <!-- Hamburger Menu -->
-    <button class="hamburger-menu" id="hamburgerBtn" onclick="toggleMenu()"><i class="bi bi-list"></i></button>
+    <button class="hamburger-menu" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');"><i class="bi bi-list"></i></button>
     <div class="side-nav-overlay" id="sideNavOverlay" onclick="closeMenu()"></div>
     <nav class="side-nav" id="sideNav">
         <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
@@ -43,7 +43,7 @@
     <!-- Input Area -->
     <div class="chat-input-area">
         <input type="text" class="input-field" id="messageInput" placeholder="Type a message...">
-        <button class="btn-gold" id="sendBtn" onclick="sendMessage()"><i class="bi bi-send-fill"></i></button>
+        <button class="btn-gold" id="sendBtn" onclick="const m=document.getElementById('messageInput').value.trim();if(m){const c=document.getElementById('chatContainer');const b=document.createElement('div');b.className='chat-bubble user';b.textContent=m;c.appendChild(b);c.scrollTop=c.scrollHeight;document.getElementById('messageInput').value='';}"><i class="bi bi-send-fill"></i></button>
     </div>
     
     <script>
