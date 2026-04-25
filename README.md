@@ -1,177 +1,252 @@
-# �BURME AI - Burmese AI Assistant
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status">
-  <img src="https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge" alt="Python">
-  <img src="https://img.shields.io/badge/FastAPI-0.104+-green?style=for-the-badge" alt="FastAPI">
-  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge" alt="License">
-</p>
+<img src="https://img.shields.io/badge/Python-3.9+-blue.svg" alt="Python">
+<img src="https://img.shields.io/badge/FastAPI-0.109.0-green.svg" alt="FastAPI">
+<img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
+<img src="https://img.shields.io/badge/HuggingFace-Spaces-purple.svg" alt="HuggingFace">
 
-<p align="center">
-  <a href="https://burme-ai.vercel.app">🌐 Live Demo</a>
-  •
-  <a href="https://huggingface.co/spaces/amkyawdev/BurmeAi-Space-Backend">🤗 Backend API</a>
-  •
-  <a href="https://github.com/amkyawdev/BurmeAi">📂 GitHub</a>
-</p>
+# 🌍 Burme Dev Speak App
+
+> AI-powered web application for Burmese text-to-speech and intelligent chat responses.
+
+![Burme Dev Speak](https://huggingface.co/spaces/amkyawdev/BurmeAi-Space-Backend/embed)
+
+</div>
 
 ---
 
-## 📖 Overview
+## ✨ Features
 
-**BurmeAi** is an AI-powered web application for Burmese (Myanmar) language support featuring:
-
-- 💬 **AI Chat** - Chat with AI assistant that understands Burmese
-- 🔊 **Text-to-Speech** - Convert Burmese text to natural speech
-- 📱 **Responsive Design** - Works on desktop and mobile
-- 🌙 **Dark Theme** - Beautiful dark UI with gold accents
+- 💬 **AI Chat** - Intelligent conversational AI powered by Groq API (Mixtral-8x7B)
+- 🔊 **Text-to-Speech** - Convert Burmese text to natural speech using Facebook MMS-TTS
+- 📱 **Responsive Design** - Modern UI with Bootstrap, optimized for all devices
+- 🎨 **Beautiful Theme** - Custom gold and black color scheme with smooth animations
+- ⚡ **Fast & Lightweight** - Built with HTML, CSS, and JavaScript for optimal performance
 
 ---
 
-## 🚀 Features
+## 🏗️ Architecture
 
-### Chat Feature
-- Real-time AI responses using GROQ's LLaMA models
-- Support for both Burmese and English
-- Responsive chat interface
-- Message history within session
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Frontend (Vercel)                     │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐        │
+│  │  Home   │  │  Chat   │  │  Speak  │  │  Docs   │  About  │
+│  └─────────┘  └─────────┘  └─────────┘  └─────────┘        │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Backend (HuggingFace Spaces)              │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │                   FastAPI Server                     │   │
+│  │  ┌─────────────┐        ┌─────────────────────┐    │   │
+│  │  │  /api/chat  │        │    /api/speak       │    │   │
+│  │  │  Groq API   │        │  MMS-TTS (Myanmar)  │    │   │
+│  │  └─────────────┘        └─────────────────────┘    │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
 
-### Text-to-Speech Feature
-- Natural Burmese voice synthesis
-- Multiple voice options (Myanmar, US, German)
-- Adjustable speech speed (0.5x - 2.0x)
-- Audio download support
-- History of generated speeches
+---
 
-### Additional Features
-- Smooth animations and particles
-- Collapsible sidebar navigation
-- Professional documentation page
-- Developer contact information
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.9+
+- [Groq API Key](https://console.groq.com) (for chat)
+- [HuggingFace Token](https://huggingface.co/settings/tokens) (for TTS)
+
+### Local Development
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/amkyawdev/BurmeAi.git
+cd BurmeAi
+```
+
+2. **Backend Setup**
+```bash
+cd BurmeAi-Space-Backend
+pip install -r requirements.txt
+export GROQ_API_KEY=your_groq_api_key
+export HF_TOKEN=your_hf_token
+uvicorn app:app --host 0.0.0.0 --port 7860
+```
+
+3. **Frontend (static files)**
+Simply open `index.html` in your browser, or serve with any static file server:
+```bash
+python -m http.server 8000
+```
+
+---
+
+## 🔌 API Reference
+
+### Health Check
+
+```http
+GET /
+```
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "message": "BurmeAi Space Backend is running"
+}
+```
+
+### Chat Endpoint
+
+```http
+POST /api/chat
+Content-Type: application/json
+
+{
+  "message": "Hello, how are you?"
+}
+```
+
+**Response:**
+```json
+{
+  "response": "I'm doing well, thank you for asking! How can I help you today?"
+}
+```
+
+### Text-to-Speech Endpoint
+
+```http
+POST /api/speak
+Content-Type: application/json
+
+{
+  "text": "မင်္ဂလာပါ"
+}
+```
+
+**Response:**
+```json
+{
+  "audio": "data:audio/wav;base64,..."
+}
+```
+
+---
+
+## 📂 Project Structure
+
+```
+BurmeAi/
+├── index.html          # Landing page
+├── chat.html           # AI Chat interface
+├── speak.html          # Text-to-Speech interface
+├── docs.html           # Documentation page
+├── about.html          # About page
+├── css/
+│   └── style.css       # Custom styles
+└── js/
+    └── app.js          # JavaScript (if needed)
+
+BurmeAi-Space-Backend/
+├── app.py              # FastAPI application
+├── requirements.txt    # Python dependencies
+├── Dockerfile          # Docker configuration
+└── README.md           # Backend documentation
+```
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **HTML5 / CSS3 / JavaScript** - Core web technologies
-- **Bootstrap Icons** - Icon library
-- **Vercel** - Frontend hosting
+| Technology | Purpose |
+|------------|---------|
+| HTML5 | Semantic markup |
+| CSS3 | Styling & animations |
+| JavaScript | Interactivity |
+| Bootstrap 5 | Responsive framework |
 
 ### Backend
-- **Python 3.11+** - Programming language
-- **FastAPI** - Web framework
-- **GROQ API** - LLM (LLaMA 3.1 8B Instant)
-- **Edge TTS** - Text-to-Speech (Microsoft)
-- **HuggingFace Spaces** - Backend hosting
+| Technology | Purpose |
+|------------|---------|
+| FastAPI | Web framework |
+| Python 3.9+ | Runtime |
+| Groq API | Chat AI (Mixtral-8x7B) |
+| HuggingFace | Text-to-Speech |
 
 ---
 
-## 📁 Project Structure
+## 📊 Usage Examples
 
-```
-BurmeAi/
-├── README.md                 # Project documentation
-├── BurmeAi/                  # Frontend (Vercel)
-│   ├── index.html            # Homepage
-│   ├── chat.html             # AI Chat page
-│   ├── speak.html            # Text-to-Speech page
-│   ├── docs.html             # Documentation page
-│   ├── about.html            # About/Contact page
-│   ├── css/
-│   │   └── style.css         # Custom styles
-│   ├── js/                   # JavaScript files
-│   └── vercel.json          # Vercel config
-│
-└── BurmeAi-Space-Backend/    # Backend (HuggingFace)
-    ├── app.py                # FastAPI application
-    ├── requirements.txt      # Python dependencies
-    ├── Dockerfile           # Docker config
-    └── README.md            # Backend docs
+### Burmese Text-to-Speech
+
+```javascript
+const response = await fetch('https://amkyawdev-burmeai-space-backend.hf.space/api/speak', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ text: 'မင်္ဂလာပါ' })
+});
+const { audio } = await response.json();
+// audio is a base64-encoded WAV file
 ```
 
----
+### AI Chat
 
-## 🔧 API Endpoints
-
-### Chat API
-```bash
-POST /api/chat
-Content-Type: application/json
-
-{
-  "message": "မင်္ဂလာပါ"
-}
-
-# Response
-{
-  "response": "မင်္ဂလာပါ! ကျွန်တော်က သင့်ကို ကူညီနိုင်ပါသည်။"
-}
-```
-
-### Speak API
-```bash
-POST /api/speak
-Content-Type: application/json
-
-{
-  "text": "မြန်မာစာ"
-}
-
-# Response
-{
-  "audio": "data:audio/mp3;base64,..."
-}
+```javascript
+const response = await fetch('https://amkyawdev-burmeai-space-backend.hf.space/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: 'What is Burmese?' })
+});
+const { response } = await response.json();
+console.log(response);
 ```
 
 ---
 
-## 🧪 Testing
+## 🤝 Contributing
 
-### Test Chat API
-```bash
-curl -X POST "https://amkyawdev-burmeai-space-backend.hf.space/api/chat" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Hello"}'
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-### Test Speak API
-```bash
-curl -X POST "https://amkyawdev-burmeai-space-backend.hf.space/api/speak" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Hello"}'
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
-## 👨‍💻 Developer
-
-**Aung Myo Kyaw**  
-Full Stack Developer
-
-- 📱 Phone: 0967740154
-- 📧 Email: amk.kyaw92@gmail.com
-- 🐙 GitHub: [@amkyawdev](https://github.com/amkyawdev)
-- 🤗 HuggingFace: [@amkyawdev](https://huggingface.co/amkyawdev)
-- 🎵 TikTok: [@amkyaw.dev](https://tiktok.com/@amkyaw.dev)
-
----
-
-## 📄 License
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## 👨‍💻 Author
 
-- **GROQ** - For providing free LLM API
-- **Microsoft** - For Edge TTS technology
-- **HuggingFace** - For hosting infrastructure
-- **Vercel** - For frontend hosting
+**Aung Myo Kyaw (Burme Dev)**
+- GitHub: [@amkyawdev](https://github.com/amkyawdev)
+- HuggingFace: [amkyawdev](https://huggingface.co/amkyawdev)
 
 ---
 
-<p align="center">
-  Made with ❤️ by <strong>Aung Myo Kyaw</strong>
-</p>
+## 🙏 Acknowledgments
+
+- [HuggingFace Spaces](https://huggingface.co/spaces) for hosting the backend
+- [Groq](https://groq.com) for providing fast AI inference
+- [Facebook AI](https://ai.facebook.com) for MMS-TTS model
+- [Bootstrap](https://getbootstrap.com) for the UI framework
+
+---
+
+<div align="center">
+
+⭐ Star this repo if you find it helpful!
+
+Made with ❤️ by [Burme Dev](https://github.com/amkyawdev)
+
+</div>

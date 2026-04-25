@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speak - Burme Dev Speak</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-gradient">
+    <!-- Floating Particles -->
+    <div class="floating-particles" id="particles"></div>
+    
+    <!-- Hamburger Menu -->
+    <button class="hamburger-menu" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');"><i class="bi bi-list"></i></button>
+    <div class="side-nav-overlay" id="sideNavOverlay" onclick="document.getElementById('sideNav').classList.remove('open');this.classList.remove('open');"></div>
+    <nav class="side-nav" id="sideNav">
+        <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
+        <a href="chat.html" class="side-nav-item"><i class="bi bi-chat-dots-fill"></i><span>Chat</span></a>
+        <a href="speak.html" class="side-nav-item active"><i class="bi bi-mic-fill"></i><span>Speak</span></a>
+        <a href="docs.html" class="side-nav-item"><i class="bi bi-book-fill"></i><span>Docs</span></a>
+        <a href="about.html" class="side-nav-item"><i class="bi bi-person-fill"></i><span>About</span></a>
+    </nav>
+    
+    <!-- Page Header -->
+    <div class="speak-page-header">
+        <h1><i class="bi bi-mic-fill"></i> Text to Speech</h1>
+        <p>Convert text to natural speech</p>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="speak-wrapper">
+        <!-- Text Input Card -->
+        <div class="speak-card">
+            <div class="speak-card-header">
+                <span><i class="bi bi-pencil"></i> Enter Text</span>
+                <span class="char-badge" id="charBadge">0 / 500</span>
+            </div>
+            <textarea class="speak-textarea" id="textInput" placeholder="ဤနေရာတွင် မြန်မာစာ သို့မဟုတ် အင်္ဂလိပ်စာ ရိုက်ထည့်ပါ..."></textarea>
+            <div class="speak-hint">
+                <i class="bi bi-lightbulb"></i> Type in Burmese or English, then generate speech
+            </div>
+        </div>
+        
+        <!-- Settings Card -->
+        <div class="speak-card settings-card">
+            <div class="setting-row">
+                <label><i class="bi bi-speedometer2"></i> Speed</label>
+                <div class="speed-control">
+                    <button class="speed-btn" onclick="changeSpeed(-0.25)">-</button>
+                    <div class="speed-slider">
+                        <input type="range" id="speedSlider" min="0.5" max="2" step="0.25" value="1" oninput="updateSpeed(this.value)">
+                        <span id="speedValue">1.0x</span>
+                    </div>
+                    <button class="speed-btn" onclick="changeSpeed(0.25)">+</button>
+                </div>
+            </div>
+            <div class="setting-row">
+                <label><i class="bi bi-person-voice"></i> Voice</label>
+                <select class="voice-select" id="voiceSelect">
+                    <option value="almandinna-enhanced">🇲🇲 Female (Myanmar)</option>
+                    <option value="calaris-enhanced">🇺🇸 Male (US)</option>
+                    <option value="dieter-enhanced">🇩🇪 Male (German)</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Generate Button -->
+        <button class="speak-btn" id="speakBtn" onclick="generateSpeech()">
+            <i class="bi bi-play-fill"></i>
+            <span>Generate Speech</span>
+        </button>
+        
+        <!-- Loading -->
+        <div class="speak-loading hidden" id="loading">
+            <div class="loading-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <p>Generating audio...</p>
+        </div>
+        
+        <!-- Success Message -->
+        <div class="speak-success hidden" id="successMsg">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Audio generated successfully!</span>
+        </div>
+        
+        <!-- Audio Player -->
+        <div class="speak-card audio-card hidden" id="audioCard">
+            <div class="audio-waveform" id="audioWaveform">
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            </div>
+            <audio id="audio" controls></audio>
+            <div class="audio-info" id="audioInfo">
+                <span><i class="bi bi-clock"></i> <span id="audioDuration">0:00</span></span>
+                <span><i class="bi bi-text-left"></i> <span id="audioText"></span></span>
+            </div>
+            <div class="audio-actions">
+                <button class="audio-btn" onclick="togglePlay()" id="playPauseBtn">
+                    <i class="bi bi-play-fill"></i> Play
+                </button>
+                <button class="audio-btn" onclick="replayAudio()">
+                    <i class="bi bi-arrow-clockwise"></i> Replay
+                </button>
+                <button class="audio-btn download" onclick="downloadAudio()">
+                    <i class="bi bi-download"></i> Download
+                </button>
+            </div>
+        </div>
+        
+        <!-- History Section -->
+        <div class="speak-card history-card">
+            <div class="history-header" onclick="toggleHistory()">
+                <span><i class="bi bi-clock-history"></i> Recent History</span>
+                <i class="bi bi-chevron-down" id="historyArrow"></i>
+            </div>
+            <div class="history-list hidden" id="historyList">
+                <div class="history-empty">
+                    <i class="bi bi-inbox"></i>
+                    <p>No history yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space";
+    let speed = 1.0;
+    let history = JSON.parse(localStorage.getItem('burme_speak_history') || '[]');
+    let isPlaying = false;
+    
+    // Particles
+    for (let i = 0; i < 15; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 8 + 's';
+        document.getElementById('particles').appendChild(p);
+    }
+    
+    // Update char count
+    const textInput = document.getElementById('textInput');
+    textInput.addEventListener('input', function() {
+        const len = this.value.length;
+        document.getElementById('charBadge').textContent = len + ' / 500';
+        document.getElementById('charBadge').style.color = len > 500 ? '#ff4444' : 'var(--text-muted)';
+    });
+    
+    // Speed control
+    function changeSpeed(delta) {
+        speed = Math.max(0.5, Math.min(2.0, speed + delta));
+        document.getElementById('speedSlider').value = speed;
+        document.getElementById('speedValue').textContent = speed.toFixed(1) + 'x';
+    }
+    
+    function updateSpeed(val) {
+        speed = parseFloat(val);
+        document.getElementById('speedValue').textContent = speed.toFixed(1) + 'x';
+    }
+    
+    // Toggle history
+    function toggleHistory() {
+        document.getElementById('historyList').classList.toggle('hidden');
+        document.getElementById('historyArrow').classList.toggle('rotated');
+    }
+    
+    // Load history
+    function loadHistory() {
+        const list = document.getElementById('historyList');
+        if (history.length === 0) {
+            list.innerHTML = '<div class="history-empty"><i class="bi bi-inbox"></i><p>No history yet</p></div>';
+            return;
+        }
+        list.innerHTML = history.slice(0, 5).map((item, i) => `
+            <div class="history-item" onclick="loadFromHistory(${i})">
+                <div class="history-text">${item.text.substring(0, 30)}${item.text.length > 30 ? '...' : ''}</div>
+                <div class="history-meta">
+                    <span><i class="bi bi-clock"></i> ${item.time}</span>
+                    <button onclick="event.stopPropagation();deleteHistory(${i})"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    function loadFromHistory(i) {
+        textInput.value = history[i].text;
+        textInput.dispatchEvent(new Event('input'));
+        toggleHistory();
+    }
+    
+    function deleteHistory(i) {
+        history.splice(i, 1);
+        localStorage.setItem('burme_speak_history', JSON.stringify(history));
+        loadHistory();
+    }
+    
+    // Generate speech
+    function generateSpeech() {
+        const text = textInput.value.trim();
+        if (!text) {
+            alert('Please enter some text');
+            return;
+        }
+        if (text.length > 500) {
+            alert('Text too long. Maximum 500 characters.');
+            return;
+        }
+        
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('audioCard').classList.add('hidden');
+        document.getElementById('successMsg').classList.add('hidden');
+        document.getElementById('speakBtn').disabled = true;
+        
+        fetch(API_URL + '/api/speak', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                text: text,
+                voice: document.getElementById('voiceSelect').value
+            })
+        })
+        .then(r => r.json())
+        .then(d => {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('speakBtn').disabled = false;
+            if (d.audio) {
+                document.getElementById('audio').src = d.audio;
+                document.getElementById('audioText').textContent = text.substring(0, 20) + '...';
+                document.getElementById('audioCard').classList.remove('hidden');
+                document.getElementById('successMsg').classList.remove('hidden');
+                
+                // Save to history
+                history.unshift({text: text, time: new Date().toLocaleTimeString()});
+                if (history.length > 10) history.pop();
+                localStorage.setItem('burme_speak_history', JSON.stringify(history));
+                loadHistory();
+                
+                document.getElementById('audio').play();
+            } else {
+                alert('Could not generate audio. ' + (d.error || 'Please try again.'));
+            }
+        })
+        .catch(e => {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('speakBtn').disabled = false;
+            alert('Error: ' + e.message);
+        });
+    }
+    
+    function togglePlay() {
+        const audio = document.getElementById('audio');
+        const btn = document.getElementById('playPauseBtn');
+        if (isPlaying) {
+            audio.pause();
+            btn.innerHTML = '<i class="bi bi-play-fill"></i> Play';
+        } else {
+            audio.play();
+            btn.innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
+        }
+        isPlaying = !isPlaying;
+    }
+    
+    function replayAudio() {
+        const audio = document.getElementById('audio');
+        audio.currentTime = 0;
+        audio.play();
+    }
+    
+    function downloadAudio() {
+        const audio = document.getElementById('audio');
+        const a = document.createElement('a');
+        a.href = audio.src;
+        a.download = 'burme-speech.wav';
+        a.click();
+    }
+    
+    // Audio events
+    document.getElementById('audio').addEventListener('timeupdate', function() {
+        const mins = Math.floor(this.currentTime / 60);
+        const secs = Math.floor(this.currentTime % 60);
+        document.getElementById('audioDuration').textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+    });
+    
+    document.getElementById('audio').addEventListener('ended', function() {
+        isPlaying = false;
+        document.getElementById('playPauseBtn').innerHTML = '<i class="bi bi-play-fill"></i> Play';
+    });
+    
+    loadHistory();
+    </script>
+</body>
+</html>

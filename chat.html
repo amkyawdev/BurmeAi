@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Burme Dev Speak</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-gradient">
+    <!-- Floating Particles -->
+    <div class="floating-particles" id="particles"></div>
+    
+    <!-- Hamburger Menu -->
+    <button class="hamburger-menu" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');"><i class="bi bi-list"></i></button>
+    <div class="side-nav-overlay" id="sideNavOverlay" onclick="document.getElementById('sideNav').classList.remove('open');this.classList.remove('open');"></div>
+    <nav class="side-nav" id="sideNav">
+        <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
+        <a href="chat.html" class="side-nav-item active"><i class="bi bi-chat-dots-fill"></i><span>Chat</span></a>
+        <a href="speak.html" class="side-nav-item"><i class="bi bi-mic-fill"></i><span>Speak</span></a>
+        <a href="docs.html" class="side-nav-item"><i class="bi bi-book-fill"></i><span>Docs</span></a>
+        <a href="about.html" class="side-nav-item"><i class="bi bi-person-fill"></i><span>About</span></a>
+    </nav>
+    
+    <!-- Thanking Animation -->
+    <div class="thanking-animation" id="thankingAnimation">
+        <i class="bi bi-heart-fill"></i>
+        <p style="margin-top:12px;color:var(--soft-gold);font-size:14px;">Thank you!</p>
+    </div>
+    
+    <!-- Page Header -->
+    <div class="chat-page-header">
+        <h1><i class="bi bi-chat-dots-fill"></i> Chat</h1>
+    </div>
+    
+    <!-- Chat Area -->
+    <div class="chat-wrapper">
+        <div class="chat-messages" id="chatContainer">
+            <div class="chat-bubble ai"><i class="bi bi-robot"></i> Hello! I'm your AI assistant. How can I help?</div>
+        </div>
+    </div>
+    
+    <!-- Input Area -->
+    <div class="chat-input-area">
+        <input type="text" class="input-field" id="messageInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()">
+        <button class="btn-gold" id="sendBtn" onclick="sendMsg()"><i class="bi bi-send-fill"></i></button>
+    </div>
+    
+    <script>
+    const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space";
+    
+    // Particles
+    for (let i = 0; i < 15; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 8 + 's';
+        document.getElementById('particles').appendChild(p);
+    }
+    
+    function addMsg(content, isUser) {
+        const c = document.getElementById('chatContainer');
+        const b = document.createElement('div');
+        b.className = isUser ? 'chat-bubble user' : 'chat-bubble ai';
+        b.innerHTML = isUser ? content : '<i class="bi bi-robot"></i> ' + content;
+        c.appendChild(b);
+        c.scrollTop = c.scrollHeight;
+    }
+    
+    function showHeart() {
+        document.getElementById('thankingAnimation').classList.add('show');
+        setTimeout(() => document.getElementById('thankingAnimation').classList.remove('show'), 2000);
+    }
+    
+    function sendMsg() {
+        const i = document.getElementById('messageInput');
+        const m = i.value.trim();
+        if (!m) return;
+        i.value = '';
+        addMsg(m, true);
+        document.getElementById('sendBtn').disabled = true;
+        
+        fetch(API_URL + '/api/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({message: m})
+        })
+        .then(r => r.json())
+        .then(d => {
+            addMsg(d.response || 'Sorry, I could not get a response.', false);
+            showHeart();
+        })
+        .catch(e => addMsg('Error: ' + e.message, false));
+        
+        document.getElementById('sendBtn').disabled = false;
+    }
+    </script>
+</body>
+</html>

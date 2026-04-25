@@ -1,0 +1,58 @@
+{
+  "version": 2,
+  "buildCommand": "echo 'Static site - no build needed'",
+  "outputDirectory": ".",
+  "installCommand": "echo 'No dependencies to install'",
+  "framework": null,
+  "builds": [
+    {
+      "src": "**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "css/**/*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "js/**/*.js",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/chat",
+      "dest": "/chat.html"
+    },
+    {
+      "src": "/speak",
+      "dest": "/speak.html"
+    },
+    {
+      "src": "/docs",
+      "dest": "/docs.html"
+    },
+    {
+      "src": "/about",
+      "dest": "/about.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ]
+}
