@@ -413,3 +413,10 @@ body {
     .action-btn { padding: 12px 16px; font-size: 14px; }
     .landing-btn { padding: 12px 28px; font-size: 15px; }
 }
+
+/* Fade Out Animation */
+.fade-out {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.5s ease;
+}
