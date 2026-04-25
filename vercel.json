@@ -4,6 +4,12 @@
   "outputDirectory": ".",
   "installCommand": "echo 'No dependencies to install'",
   "framework": null,
+  "env": {
+    "VERCEL_API_URL": {
+      "description": "HuggingFace Space Backend URL",
+      "value": "https://amkyawdev-burmeai-space-backend.hf.space"
+    }
+  },
   "builds": [
     {
       "src": "**/*.html",
@@ -15,10 +21,6 @@
     },
     {
       "src": "js/**/*.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "**/*.{png,jpg,jpeg,gif,svg,ico,webp,woff,woff2,ttf,eot}",
       "use": "@vercel/static"
     }
   ],
@@ -32,15 +34,7 @@
       "dest": "/chat.html"
     },
     {
-      "src": "/chat.html",
-      "dest": "/chat.html"
-    },
-    {
       "src": "/speak",
-      "dest": "/speak.html"
-    },
-    {
-      "src": "/speak.html",
       "dest": "/speak.html"
     },
     {
@@ -48,24 +42,8 @@
       "dest": "/docs.html"
     },
     {
-      "src": "/docs.html",
-      "dest": "/docs.html"
-    },
-    {
       "src": "/about",
       "dest": "/about.html"
-    },
-    {
-      "src": "/about.html",
-      "dest": "/about.html"
-    },
-    {
-      "src": "/css/(.*)",
-      "dest": "/css/$1"
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/js/$1"
     },
     {
       "src": "/(.*)",
@@ -77,42 +55,8 @@
       "source": "/(.*)",
       "headers": [
         {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
           "key": "Access-Control-Allow-Origin",
           "value": "*"
-        }
-      ]
-    },
-    {
-      "source": "/css/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/*.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
         }
       ]
     }

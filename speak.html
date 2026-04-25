@@ -36,7 +36,7 @@
         </div>
     </div>
     <script>
-const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space/api/speak";
+const API_URL = import.meta.env.VERCEL_API_URL || "https://amkyawdev-burmeai-space-backend.hf.space";
 document.getElementById("hamburgerMenu").addEventListener("click", function() {
     document.getElementById("sideNav").classList.toggle("open");
     document.getElementById("sideNavOverlay").classList.toggle("open");
@@ -66,7 +66,7 @@ async function generateSpeech() {
     waveform.classList.remove("hidden");
     audioPlayer.classList.add("hidden");
     try {
-        var res = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: text }) });
+        var res = await fetch(API_URL + "/api/speak", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: text }) });
         var data = await res.json();
         if (data.audio) { audio.src = data.audio; audioPlayer.classList.remove("hidden"); audio.play(); }
         else { alert("Could not generate audio"); }

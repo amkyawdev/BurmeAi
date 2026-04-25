@@ -39,7 +39,7 @@
         </div>
     </div>
     <script>
-const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space/api/chat";
+const API_URL = import.meta.env.VERCEL_API_URL || "https://amkyawdev-burmeai-space-backend.hf.space";
 const hamburgerMenu = document.getElementById("hamburgerMenu");
 const sideNav = document.getElementById("sideNav");
 const sideNavOverlay = document.getElementById("sideNavOverlay");
@@ -77,7 +77,7 @@ async function sendMessage() {
     sendBtn.disabled = true;
     sendIcon.className = "spinner";
     try {
-        const res = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: msg }) });
+        const res = await fetch(API_URL + "/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: msg }) });
         const data = await res.json();
         addMessage(data.response || "Sorry, I could not get a response.", false);
         showThanking();
