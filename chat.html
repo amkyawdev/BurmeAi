@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Burme Dev Speak</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-gradient">
+    <div class="floating-particles" id="particles"></div>
+    <div class="hamburger-menu" id="hamburgerMenu"><i class="bi bi-list"></i></div>
+    <div class="side-nav-overlay" id="sideNavOverlay"></div>
+    <div class="side-nav" id="sideNav">
+        <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
+        <a href="chat.html" class="side-nav-item active"><i class="bi bi-chat-dots-fill"></i><span>Chat</span></a>
+        <a href="speak.html" class="side-nav-item"><i class="bi bi-mic-fill"></i><span>Speak</span></a>
+        <a href="docs.html" class="side-nav-item"><i class="bi bi-book-fill"></i><span>Docs</span></a>
+        <a href="about.html" class="side-nav-item"><i class="bi bi-person-fill"></i><span>About</span></a>
+    </div>
+    <div class="thanking-animation" id="thankingAnimation">
+        <i class="bi bi-heart-fill"></i>
+        <p style="margin-top:12px;color:var(--soft-gold);font-size:14px;">Thank you!</p>
+    </div>
+    <div class="container" style="padding-top:60px;padding-bottom:80px;">
+        <div class="page-header"><h1 style="color:var(--soft-gold);"><i class="bi bi-chat-dots-fill"></i></h1><p>Chat with AI</p></div>
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-bubble ai"><i class="bi bi-robot" style="color:var(--soft-gold);margin-right:6px;"></i>Hello! Im your AI assistant. How can I help?</div>
+        </div>
+        <div style="width:100%;max-width:500px;display:flex;gap:10px;margin-top:16px;">
+            <div style="position:relative;flex:1;">
+                <input type="text" class="input-field" id="messageInput" placeholder="Type a message..." style="padding-right:40px;">
+                <label for="fileInput" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-muted);">
+                    <i class="bi bi-paperclip"></i>
+                </label>
+                <input type="file" id="fileInput" hidden>
+            </div>
+            <button class="btn-gold" id="sendBtn" style="padding:10px 16px;"><i class="bi bi-send-fill" id="sendIcon" style="font-size:14px;"></i></button>
+        </div>
+    </div>
+    <script>
+const API_URL = "https://burmeai-space-backend.hf.space/api/chat";
+const hamburgerMenu = document.getElementById("hamburgerMenu");
+const sideNav = document.getElementById("sideNav");
+const sideNavOverlay = document.getElementById("sideNavOverlay");
+hamburgerMenu.addEventListener("click", () => { sideNav.classList.toggle("open"); sideNavOverlay.classList.toggle("open"); });
+sideNavOverlay.addEventListener("click", () => { sideNav.classList.remove("open"); sideNavOverlay.classList.remove("open"); });
+for (let i = 0; i < 15; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "%";
+    p.style.top = Math.random() * 100 + "%";
+    p.style.animationDelay = Math.random() * 8 + "s";
+    document.getElementById("particles").appendChild(p);
+}
+const messageInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const chatContainer = document.getElementById("chatContainer");
+const sendIcon = document.getElementById("sendIcon");
+const thankingAnimation = document.getElementById("thankingAnimation");
+function addMessage(content, isUser) {
+    const bubble = document.createElement("div");
+    bubble.className = isUser ? "chat-bubble user" : "chat-bubble ai";
+    bubble.innerHTML = isUser ? content : "<i class="bi bi-robot" style="color:var(--soft-gold);margin-right:6px;"></i>" + content;
+    chatContainer.appendChild(bubble);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+function showThanking() {
+    thankingAnimation.classList.add("show");
+    setTimeout(() => thankingAnimation.classList.remove("show"), 2000);
+}
+async function sendMessage() {
+    const msg = messageInput.value.trim();
+    if (!msg) return;
+    addMessage(msg, true);
+    messageInput.value = "";
+    sendBtn.disabled = true;
+    sendIcon.className = "spinner";
+    try {
+        const res = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: msg }) });
+        const data = await res.json();
+        addMessage(data.response || "Sorry, I could not get a response.", false);
+        showThanking();
+    } catch (e) { addMessage("Sorry, something went wrong.", false); }
+    sendBtn.disabled = false;
+    sendIcon.className = "bi bi-send-fill";
+}
+sendBtn.addEventListener("click", sendMessage);
+messageInput.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
+    </script>
+</body>
+</html>

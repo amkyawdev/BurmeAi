@@ -1,0 +1,395 @@
+/* Burme Dev Speak App - Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-black: #000000;
+    --soft-gold: #D4AF37;
+    --soft-gold-light: #E5C565;
+    --soft-gold-low: rgba(212, 175, 55, 0.15);
+    --soft-gold-glow: rgba(212, 175, 55, 0.5);
+    --text-white: #ffffff;
+    --text-muted: #a0a0a0;
+    --bg-dark: #0a0a0a;
+    --bg-card: rgba(255, 255, 255, 0.03);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--primary-black);
+    color: var(--text-white);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Background Effects */
+.bg-gradient {
+    background: linear-gradient(135deg, var(--primary-black) 0%, #0d0d0d 50%, var(--primary-black) 100%);
+}
+
+.floating-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--soft-gold);
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: float 8s infinite ease-in-out;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) translateX(0); opacity: 0.4; }
+    50% { transform: translateY(-100px) translateX(50px); opacity: 0.8; }
+}
+
+/* Container */
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* Buttons */
+.btn-gold {
+    background: linear-gradient(135deg, var(--soft-gold) 0%, #b8962e 100%);
+    color: var(--primary-black);
+    border: none;
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-gold:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px var(--soft-gold-glow);
+}
+
+.btn-gold:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-white);
+    border: 2px solid var(--soft-gold);
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+    background: var(--soft-gold-low);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Form Elements */
+.input-field {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--text-white);
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--soft-gold);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.input-field::placeholder {
+    color: var(--text-muted);
+}
+
+textarea.input-field {
+    min-height: 100px;
+    resize: none;
+}
+
+/* Chat Bubbles */
+.chat-container {
+    width: 100%;
+    max-width: 500px;
+    flex: 1;
+    padding: 20px 0;
+    overflow-y: auto;
+}
+
+.chat-bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    animation: fadeSlideUp 0.3s ease;
+    font-size: 13px;
+}
+
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-bubble.user {
+    background: var(--soft-gold-low);
+    color: var(--text-white);
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.ai {
+    background: var(--bg-card);
+    color: var(--text-white);
+    margin-right: auto;
+    border-bottom-left-radius: 4px;
+}
+
+/* Hamburger Menu */
+.hamburger-menu {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 200;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.hamburger-menu i {
+    font-size: 24px;
+    color: var(--soft-gold);
+    transition: transform 0.3s ease;
+}
+
+.hamburger-menu:hover i {
+    transform: scale(1.1);
+}
+
+/* Side Navigation */
+.side-nav {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100vh;
+    background: rgba(10, 10, 10, 0.98);
+    backdrop-filter: blur(20px);
+    z-index: 150;
+    transition: left 0.3s ease;
+    padding: 80px 24px 24px;
+}
+
+.side-nav.open {
+    left: 0;
+}
+
+.side-nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 140;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.side-nav-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.side-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
+}
+
+.side-nav-item:hover,
+.side-nav-item.active {
+    background: var(--soft-gold-low);
+    color: var(--soft-gold);
+}
+
+.side-nav-item i {
+    font-size: 18px;
+}
+
+/* Page Header */
+.page-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.page-header p {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* Spinner Animation */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Waveform/TTS Animation */
+.waveform {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 50px;
+}
+
+.waveform span {
+    width: 4px;
+    height: 20px;
+    background: var(--soft-gold);
+    border-radius: 2px;
+    animation: wave 1s ease-in-out infinite;
+}
+
+.waveform span:nth-child(2) { animation-delay: 0.1s; }
+.waveform span:nth-child(3) { animation-delay: 0.2s; }
+.waveform span:nth-child(4) { animation-delay: 0.3s; }
+.waveform span:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes wave {
+    0%, 100% { height: 20px; }
+    50% { height: 40px; }
+}
+
+/* Audio Player */
+.audio-player {
+    width: 100%;
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.audio-player audio {
+    width: 100%;
+    height: 36px;
+}
+
+/* Thanking Animation */
+.thanking-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: var(--bg-dark);
+    border: 2px solid var(--soft-gold);
+    border-radius: 16px;
+    padding: 24px 32px;
+    text-align: center;
+    z-index: 300;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.thanking-animation.show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.thanking-animation i {
+    font-size: 48px;
+    color: var(--soft-gold);
+    animation: heartbeat 1s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+/* Animations */
+.fade-out {
+    animation: fadeOut 0.5s ease forwards;
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: scale(0.95); }
+}
+
+/* Utility Classes */
+.hidden { display: none !important; }
+.mt-2 { margin-top: 16px; }
+.mt-4 { margin-top: 32px; }
+.text-center { text-align: center; }
+
+/* Responsive */
+@media (max-width: 480px) {
+    .container { padding: 16px; }
+    .btn-gold { padding: 8px 20px; font-size: 12px; }
+}

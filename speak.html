@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speak - Burme Dev Speak</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-gradient">
+    <div class="floating-particles" id="particles"></div>
+    <div class="hamburger-menu" id="hamburgerMenu"><i class="bi bi-list"></i></div>
+    <div class="side-nav-overlay" id="sideNavOverlay"></div>
+    <div class="side-nav" id="sideNav">
+        <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
+        <a href="chat.html" class="side-nav-item"><i class="bi bi-chat-dots-fill"></i><span>Chat</span></a>
+        <a href="speak.html" class="side-nav-item active"><i class="bi bi-mic-fill"></i><span>Speak</span></a>
+        <a href="docs.html" class="side-nav-item"><i class="bi bi-book-fill"></i><span>Docs</span></a>
+        <a href="about.html" class="side-nav-item"><i class="bi bi-person-fill"></i><span>About</span></a>
+    </div>
+    <div class="container" style="padding-top:60px;padding-bottom:80px;">
+        <div class="page-header"><h1 style="color:var(--soft-gold);"><i class="bi bi-mic-fill"></i></h1><p>Text to Speech</p></div>
+        <textarea class="input-field" id="textInput" placeholder="Enter Burmese text to speak..."></textarea>
+        <button class="btn-gold mt-2" id="speakBtn" style="width:100%">
+            <i class="bi bi-play-fill" id="speakIcon"></i><span id="speakText">Speak</span>
+        </button>
+        <div class="hidden mt-4" id="waveform">
+            <div class="waveform"><span></span><span></span><span></span><span></span><span></span></div>
+            <p style="color:var(--text-muted);font-size:12px;margin-top:8px">Generating audio...</p>
+        </div>
+        <div class="audio-player hidden" id="audioPlayer">
+            <audio id="audio" controls></audio>
+            <button class="btn-outline mt-2" id="downloadBtn" style="width:100%">
+                <i class="bi bi-download" style="margin-right:6px"></i>Download
+            </button>
+        </div>
+    </div>
+    <script>
+const API_URL = "https://burmeai-space-backend.hf.space/api/speak";
+document.getElementById("hamburgerMenu").addEventListener("click", function() {
+    document.getElementById("sideNav").classList.toggle("open");
+    document.getElementById("sideNavOverlay").classList.toggle("open");
+});
+document.getElementById("sideNavOverlay").addEventListener("click", function() {
+    document.getElementById("sideNav").classList.remove("open");
+    document.getElementById("sideNavOverlay").classList.remove("open");
+});
+for (var i = 0; i < 15; i++) {
+    var p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "%";
+    p.style.top = Math.random() * 100 + "%";
+    p.style.animationDelay = Math.random() * 8 + "s";
+    document.getElementById("particles").appendChild(p);
+}
+var textInput = document.getElementById("textInput");
+var speakBtn = document.getElementById("speakBtn");
+var speakIcon = document.getElementById("speakIcon");
+var waveform = document.getElementById("waveform");
+var audioPlayer = document.getElementById("audioPlayer");
+var audio = document.getElementById("audio");
+async function generateSpeech() {
+    var text = textInput.value.trim();
+    if (!text) { alert("Please enter some text"); return; }
+    speakBtn.disabled = true;
+    waveform.classList.remove("hidden");
+    audioPlayer.classList.add("hidden");
+    try {
+        var res = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: text }) });
+        var data = await res.json();
+        if (data.audio) { audio.src = data.audio; audioPlayer.classList.remove("hidden"); audio.play(); }
+        else { alert("Could not generate audio"); }
+    } catch (e) { alert("Error: " + e.message); }
+    speakBtn.disabled = false;
+    waveform.classList.add("hidden");
+}
+speakBtn.addEventListener("click", generateSpeech);
+document.getElementById("downloadBtn").addEventListener("click", function() { var a = document.createElement("a"); a.href = audio.src; a.download = "burmese-speech.wav"; a.click(); });
+    </script>
+</body>
+</html>
