@@ -12,8 +12,8 @@
     <div class="floating-particles" id="particles"></div>
     
     <!-- Hamburger Menu -->
-    <button class="hamburger-menu" id="hamburgerBtn"><i class="bi bi-list"></i></button>
-    <div class="side-nav-overlay" id="sideNavOverlay"></div>
+    <button class="hamburger-menu" id="hamburgerBtn" onclick="toggleMenu()"><i class="bi bi-list"></i></button>
+    <div class="side-nav-overlay" id="sideNavOverlay" onclick="closeMenu()"></div>
     <nav class="side-nav" id="sideNav">
         <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
         <a href="chat.html" class="side-nav-item active"><i class="bi bi-chat-dots-fill"></i><span>Chat</span></a>
@@ -43,13 +43,23 @@
     <!-- Input Area -->
     <div class="chat-input-area">
         <input type="text" class="input-field" id="messageInput" placeholder="Type a message...">
-        <button class="btn-gold" id="sendBtn"><i class="bi bi-send-fill"></i></button>
+        <button class="btn-gold" id="sendBtn" onclick="sendMessage()"><i class="bi bi-send-fill"></i></button>
     </div>
     
     <script>
     // Config
     const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space";
     const STORAGE_KEY = "burmeai_chat_history";
+    
+    // Menu functions
+    function toggleMenu() {
+        document.getElementById('sideNav').classList.toggle('open');
+        document.getElementById('sideNavOverlay').classList.toggle('open');
+    }
+    function closeMenu() {
+        document.getElementById('sideNav').classList.remove('open');
+        document.getElementById('sideNavOverlay').classList.remove('open');
+    }
     
     // Particles
     for (let i = 0; i < 15; i++) {
@@ -61,27 +71,16 @@
         document.getElementById('particles').appendChild(p);
     }
     
-    // Menu
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const sideNav = document.getElementById('sideNav');
-    const sideNavOverlay = document.getElementById('sideNavOverlay');
-    hamburgerBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        sideNav.classList.toggle('open');
-        sideNavOverlay.classList.toggle('open');
-    });
-    sideNavOverlay.addEventListener('click', function() {
-        sideNav.classList.remove('open');
-        sideNavOverlay.classList.remove('open');
-    });
-    
-    // Chat Elements
+    // No need for event listeners - using onclick
     const chatContainer = document.getElementById('chatContainer');
     const messageInput = document.getElementById('messageInput');
     const sendBtn = document.getElementById('sendBtn');
     const thankingAnimation = document.getElementById('thankingAnimation');
     
-    // Add message
+    // Enter key handler
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
     function addMessage(content, isUser) {
         const bubble = document.createElement('div');
         bubble.className = isUser ? 'chat-bubble user' : 'chat-bubble ai';
@@ -129,11 +128,6 @@
         sendBtn.disabled = false;
     }
     
-    // Events
-    sendBtn.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') sendMessage();
-    });
     </script>
 </body>
 </html>
