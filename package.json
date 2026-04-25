@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "AI-powered web application for Burmese text-to-speech and intelligent chat responses",
   "private": true,
+  "main": "index.html",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "echo 'Static site - open index.html in browser' && python -m http.server 3000",
+    "start": "python -m http.server 3000",
+    "build": "echo 'Static site - no build needed'",
+    "preview": "echo 'Static site - no preview needed'"
   },
   "keywords": [
     "burmese",
@@ -14,11 +16,23 @@
     "text-to-speech",
     "chatbot",
     "huggingface",
-    "vercel"
+    "vercel",
+    "fastapi"
   ],
   "author": "Aung Myo Kyaw (Burme Dev)",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
-    "vite": "^5.0.0"
-  }
+    "vercel": "^33.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amkyawdev/BurmeAi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/amkyawdev/BurmeAi/issues"
+  },
+  "homepage": "https://github.com/amkyawdev/BurmeAi#readme"
 }

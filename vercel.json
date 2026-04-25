@@ -1,5 +1,9 @@
 {
   "version": 2,
+  "buildCommand": "echo 'Static site - no build needed'",
+  "outputDirectory": ".",
+  "installCommand": "echo 'No dependencies to install'",
+  "framework": null,
   "builds": [
     {
       "src": "**/*.html",
@@ -14,7 +18,7 @@
       "use": "@vercel/static"
     },
     {
-      "src": "**/*.{png,jpg,jpeg,gif,svg,ico}",
+      "src": "**/*.{png,jpg,jpeg,gif,svg,ico,webp,woff,woff2,ttf,eot}",
       "use": "@vercel/static"
     }
   ],
@@ -28,7 +32,15 @@
       "dest": "/chat.html"
     },
     {
+      "src": "/chat.html",
+      "dest": "/chat.html"
+    },
+    {
       "src": "/speak",
+      "dest": "/speak.html"
+    },
+    {
+      "src": "/speak.html",
       "dest": "/speak.html"
     },
     {
@@ -36,8 +48,24 @@
       "dest": "/docs.html"
     },
     {
+      "src": "/docs.html",
+      "dest": "/docs.html"
+    },
+    {
       "src": "/about",
       "dest": "/about.html"
+    },
+    {
+      "src": "/about.html",
+      "dest": "/about.html"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
     },
     {
       "src": "/(.*)",
@@ -63,6 +91,10 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
         }
       ]
     },
@@ -72,6 +104,15 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/*.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
         }
       ]
     }

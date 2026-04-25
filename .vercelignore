@@ -1,0 +1,12 @@
+# Vercel ignore file
+.git
+.gitignore
+README.md
+node_modules
+BurmeAi-Space-Backend
+docs
+*.md
+LICENSE
+.env
+.env.*
+.vercelignore
