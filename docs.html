@@ -8,50 +8,133 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="bg-gradient">
+    <!-- Floating Particles -->
     <div class="floating-particles" id="particles"></div>
-    <div class="hamburger-menu" id="hamburgerMenu"><i class="bi bi-list"></i></div>
-    <div class="side-nav-overlay" id="sideNavOverlay"></div>
-    <div class="side-nav" id="sideNav">
+    
+    <!-- Hamburger Menu -->
+    <button class="hamburger-menu" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');"><i class="bi bi-list"></i></button>
+    <div class="side-nav-overlay" id="sideNavOverlay" onclick="document.getElementById('sideNav').classList.remove('open');this.classList.remove('open');"></div>
+    <nav class="side-nav" id="sideNav">
         <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
         <a href="chat.html" class="side-nav-item"><i class="bi bi-chat-dots-fill"></i><span>Chat</span></a>
         <a href="speak.html" class="side-nav-item"><i class="bi bi-mic-fill"></i><span>Speak</span></a>
         <a href="docs.html" class="side-nav-item active"><i class="bi bi-book-fill"></i><span>Docs</span></a>
         <a href="about.html" class="side-nav-item"><i class="bi bi-person-fill"></i><span>About</span></a>
+    </nav>
+    
+    <!-- Page Header -->
+    <div class="docs-page-header">
+        <h1><i class="bi bi-book-fill"></i> Documentation</h1>
     </div>
-    <div class="container" style="padding-top:60px;padding-bottom:80px;justify-content:flex-start">
-        <div class="page-header"><h1 style="color:var(--soft-gold);"><i class="bi bi-book-fill"></i></h1><p>Documentation</p></div>
-        <div style="width:100%;color:var(--text-white);text-align:left">
-            <div style="margin-bottom:24px">
-                <h3 style="color:var(--soft-gold);margin-bottom:8px"><i class="bi bi-question-circle" style="margin-right:6px"></i>How It Works</h3>
-                <p style="color:var(--text-muted);font-size:13px">Burme Dev Speak uses AI models to convert Burmese text to speech and provide smart chat responses.</p>
+    
+    <!-- Main Content -->
+    <div class="docs-wrapper">
+        <!-- Getting Started -->
+        <div class="docs-section">
+            <h2 class="docs-section-title"><i class="bi bi-rocket-takeoff"></i> Getting Started</h2>
+            <div class="docs-card">
+                <h3>How to Use</h3>
+                <ol class="docs-steps">
+                    <li>Open the app at <a href="https://burme-ai.vercel.app">burme-ai.vercel.app</a></li>
+                    <li>Choose Chat or Speak feature</li>
+                    <li>Start chatting or convert text to speech</li>
+                </ol>
             </div>
-            <div style="margin-bottom:24px">
-                <h3 style="color:var(--soft-gold);margin-bottom:8px"><i class="bi bi-cpu" style="margin-right:6px"></i>AI Models</h3>
-                <p style="color:var(--text-muted);font-size:13px"><strong>Text-to-Speech:</strong> facebook/mms-tts-mya<br><strong>Chat:</strong> mixtral-8x7b via GROQ API</p>
+        </div>
+        
+        <!-- Features -->
+        <div class="docs-section">
+            <h2 class="docs-section-title"><i class="bi bi-stars"></i> Features</h2>
+            <div class="docs-card">
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="bi bi-chat-dots-fill"></i></div>
+                    <div class="feature-info">
+                        <h4>AI Chat</h4>
+                        <p>Chat with AI-powered assistant that understands Burmese language</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="bi bi-mic-fill"></i></div>
+                    <div class="feature-info">
+                        <h4>Text to Speech</h4>
+                        <p>Convert Burmese text to natural speech audio</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="bi bi-download"></i></div>
+                    <div class="feature-info">
+                        <h4>Download Audio</h4>
+                        <p>Save generated speech as WAV file</p>
+                    </div>
+                </div>
             </div>
-            <div style="margin-bottom:24px">
-                <h3 style="color:var(--soft-gold);margin-bottom:8px"><i class="bi bi-key" style="margin-right:6px"></i>API Usage</h3>
-                <p style="color:var(--text-muted);font-size:13px">API keys are stored securely in environment variables.</p>
+        </div>
+        
+        <!-- API -->
+        <div class="docs-section">
+            <h2 class="docs-section-title"><i class="bi bi-code-slash"></i> API Endpoints</h2>
+            <div class="docs-card">
+                <div class="api-endpoint">
+                    <div class="api-method post">POST</div>
+                    <div class="api-path">/api/chat</div>
+                </div>
+                <p class="api-desc">Chat with AI assistant</p>
+                <pre class="api-code">{
+  "message": "မင်္ဂလာပါ"
+}</pre>
+            </div>
+            <div class="docs-card">
+                <div class="api-endpoint">
+                    <div class="api-method post">POST</div>
+                    <div class="api-path">/api/speak</div>
+                </div>
+                <p class="api-desc">Convert text to speech</p>
+                <pre class="api-code">{
+  "text": "မြန်မာစာ"
+}</pre>
+            </div>
+        </div>
+        
+        <!-- Tech -->
+        <div class="docs-section">
+            <h2 class="docs-section-title"><i class="bi bi-gear-fill"></i> Technology</h2>
+            <div class="docs-card">
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <i class="bi bi-filetype-html"></i>
+                        <span>Frontend</span>
+                        <small>HTML/CSS/JS</small>
+                    </div>
+                    <div class="tech-item">
+                        <i class="bi bi-lightning-fill"></i>
+                        <span>Backend</span>
+                        <small>FastAPI</small>
+                    </div>
+                    <div class="tech-item">
+                        <i class="bi bi-box-seam"></i>
+                        <span>AI Model</span>
+                        <small>HuggingFace</small>
+                    </div>
+                    <div class="tech-item">
+                        <i class="bi bi-cloud-fill"></i>
+                        <span>Hosting</span>
+                        <small>Vercel</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    
     <script>
-document.getElementById('hamburgerMenu').addEventListener('click', function() {
-    document.getElementById('sideNav').classList.toggle('open');
-    document.getElementById('sideNavOverlay').classList.toggle('open');
-});
-document.getElementById('sideNavOverlay').addEventListener('click', function() {
-    document.getElementById('sideNav').classList.remove('open');
-    document.getElementById('sideNavOverlay').classList.remove('open');
-});
-for (var i = 0; i < 10; i++) {
-    var p = document.createElement('div');
-    p.className = 'particle';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.top = Math.random() * 100 + '%';
-    p.style.animationDelay = Math.random() * 8 + 's';
-    document.getElementById('particles').appendChild(p);
-}
+    // Particles
+    for (let i = 0; i < 15; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 8 + 's';
+        document.getElementById('particles').appendChild(p);
+    }
     </script>
 </body>
 </html>

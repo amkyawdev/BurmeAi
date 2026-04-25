@@ -13,7 +13,7 @@
     
     <!-- Hamburger Menu -->
     <button class="hamburger-menu" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');"><i class="bi bi-list"></i></button>
-    <div class="side-nav-overlay" id="sideNavOverlay" onclick="closeMenu()"></div>
+    <div class="side-nav-overlay" id="sideNavOverlay" onclick="document.getElementById('sideNav').classList.remove('open');this.classList.remove('open');"></div>
     <nav class="side-nav" id="sideNav">
         <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
         <a href="chat.html" class="side-nav-item active"><i class="bi bi-chat-dots-fill"></i><span>Chat</span></a>
@@ -42,24 +42,12 @@
     
     <!-- Input Area -->
     <div class="chat-input-area">
-        <input type="text" class="input-field" id="messageInput" placeholder="Type a message...">
-        <button class="btn-gold" id="sendBtn" onclick="const m=document.getElementById('messageInput').value.trim();if(m){const c=document.getElementById('chatContainer');const b=document.createElement('div');b.className='chat-bubble user';b.textContent=m;c.appendChild(b);c.scrollTop=c.scrollHeight;document.getElementById('messageInput').value='';}"><i class="bi bi-send-fill"></i></button>
+        <input type="text" class="input-field" id="messageInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()">
+        <button class="btn-gold" id="sendBtn" onclick="sendMsg()"><i class="bi bi-send-fill"></i></button>
     </div>
     
     <script>
-    // Config
     const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space";
-    const STORAGE_KEY = "burmeai_chat_history";
-    
-    // Menu functions
-    function toggleMenu() {
-        document.getElementById('sideNav').classList.toggle('open');
-        document.getElementById('sideNavOverlay').classList.toggle('open');
-    }
-    function closeMenu() {
-        document.getElementById('sideNav').classList.remove('open');
-        document.getElementById('sideNavOverlay').classList.remove('open');
-    }
     
     // Particles
     for (let i = 0; i < 15; i++) {
@@ -71,63 +59,42 @@
         document.getElementById('particles').appendChild(p);
     }
     
-    // No need for event listeners - using onclick
-    const chatContainer = document.getElementById('chatContainer');
-    const messageInput = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const thankingAnimation = document.getElementById('thankingAnimation');
+    function addMsg(content, isUser) {
+        const c = document.getElementById('chatContainer');
+        const b = document.createElement('div');
+        b.className = isUser ? 'chat-bubble user' : 'chat-bubble ai';
+        b.innerHTML = isUser ? content : '<i class="bi bi-robot"></i> ' + content;
+        c.appendChild(b);
+        c.scrollTop = c.scrollHeight;
+    }
     
-    // Enter key handler
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') sendMessage();
-    });
-    function addMessage(content, isUser) {
-        const bubble = document.createElement('div');
-        bubble.className = isUser ? 'chat-bubble user' : 'chat-bubble ai';
-        if (isUser) {
-            bubble.textContent = content;
-        } else {
-            bubble.innerHTML = '<i class="bi bi-robot"></i> ' + content;
-        }
-        chatContainer.appendChild(bubble);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+    function showHeart() {
+        document.getElementById('thankingAnimation').classList.add('show');
+        setTimeout(() => document.getElementById('thankingAnimation').classList.remove('show'), 2000);
+    }
+    
+    function sendMsg() {
+        const i = document.getElementById('messageInput');
+        const m = i.value.trim();
+        if (!m) return;
+        i.value = '';
+        addMsg(m, true);
+        document.getElementById('sendBtn').disabled = true;
         
-        // Save to localStorage
-        let history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]';
-        history.push({content, isUser, time: Date.now()});
-        if (history.length > 50) history = history.slice(-50);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-    }
-    
-    // Thanking
-    function showThanking() {
-        thankingAnimation.classList.add('show');
-        setTimeout(() => thankingAnimation.classList.remove('show'), 2000);
-    }
-    
-    // Send
-    async function sendMessage() {
-        const msg = messageInput.value.trim();
-        if (!msg) return;
-        messageInput.value = '';
-        addMessage(msg, true);
-        sendBtn.disabled = true;
+        fetch(API_URL + '/api/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({message: m})
+        })
+        .then(r => r.json())
+        .then(d => {
+            addMsg(d.response || 'Sorry, I could not get a response.', false);
+            showHeart();
+        })
+        .catch(e => addMsg('Error: ' + e.message, false));
         
-        try {
-            const res = await fetch(API_URL + '/api/chat', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({message: msg})
-            });
-            const data = await res.json();
-            addMessage(data.response || 'Sorry, I could not get a response.', false);
-            showThanking();
-        } catch (e) {
-            addMessage('Error: ' + e.message, false);
-        }
-        sendBtn.disabled = false;
+        document.getElementById('sendBtn').disabled = false;
     }
-    
     </script>
 </body>
 </html>
