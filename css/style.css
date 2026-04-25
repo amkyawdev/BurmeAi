@@ -479,3 +479,230 @@ body {
     .chat-page-header { padding-left: 60px; }
     .chat-input-area { padding-left: 16px; }
 }
+
+/* ======================== */
+/* SPEAK PAGE ENHANCED       */
+/* ======================== */
+.speak-page-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    padding-left: 70px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 100;
+}
+.speak-page-header h1 {
+    font-size: 20px;
+    color: var(--soft-gold);
+}
+
+.speak-wrapper {
+    padding: 80px 16px 100px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.speak-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.speak-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.speak-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--soft-gold);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.speak-textarea {
+    width: 100%;
+    height: 150px;
+    padding: 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-white);
+    font-size: 15px;
+    resize: none;
+    outline: none;
+    transition: all 0.3s ease;
+}
+.speak-textarea:focus {
+    border-color: var(--soft-gold);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+.speak-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.char-count {
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+.settings-card {
+    padding: 16px 20px;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.setting-item label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-white);
+    font-size: 14px;
+}
+
+.speed-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.speed-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(212, 175, 55, 0.2);
+    border: 1px solid var(--soft-gold);
+    color: var(--soft-gold);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.speed-btn:hover {
+    background: var(--soft-gold);
+    color: #000;
+}
+
+#speedValue {
+    color: var(--soft-gold);
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+}
+
+.speak-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--soft-gold), #b8942e);
+    border: none;
+    border-radius: 14px;
+    color: #000;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.speak-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+}
+.speak-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.speak-loading {
+    text-align: center;
+    padding: 24px;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--soft-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 12px;
+}
+
+.audio-card {
+    animation: fadeIn 0.3s ease;
+}
+
+.audio-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--soft-gold);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.audio-card audio {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.audio-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.audio-btn {
+    flex: 1;
+    min-width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 12px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-white);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.audio-btn:hover {
+    border-color: var(--soft-gold);
+    background: rgba(212, 175, 55, 0.2);
+}
+.audio-btn.download {
+    background: var(--soft-gold);
+    color: #000;
+    border-color: var(--soft-gold);
+}
+.audio-btn.download:hover {
+    background: #b8942e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .speak-wrapper { padding: 70px 12px 90px; }
+    .speak-textarea { height: 120px; }
+    .audio-actions { flex-direction: column; }
+    .audio-btn { width: 100%; }
+}

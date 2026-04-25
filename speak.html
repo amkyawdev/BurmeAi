@@ -8,17 +8,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="bg-gradient">
+    <!-- Floating Particles -->
     <div class="floating-particles" id="particles"></div>
     
-    <!-- Hamburger Menu Button -->
-    <button class="hamburger-menu" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');">
-        <i class="bi bi-list"></i>
-    </button>
-    
-    <!-- Side Nav Overlay -->
-    <div class="side-nav-overlay" id="sideNavOverlay" onclick="closeMenu()"></div>
-    
-    <!-- Side Navigation -->
+    <!-- Hamburger Menu -->
+    <button class="hamburger-menu" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');"><i class="bi bi-list"></i></button>
+    <div class="side-nav-overlay" id="sideNavOverlay" onclick="document.getElementById('sideNav').classList.remove('open');this.classList.remove('open');"></div>
     <nav class="side-nav" id="sideNav">
         <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
         <a href="chat.html" class="side-nav-item"><i class="bi bi-chat-dots-fill"></i><span>Chat</span></a>
@@ -27,107 +22,136 @@
         <a href="about.html" class="side-nav-item"><i class="bi bi-person-fill"></i><span>About</span></a>
     </nav>
     
-    <div class="container" style="padding-top:60px;padding-bottom:80px;">
-        <div class="page-header">
-            <h1 style="color:var(--soft-gold);"><i class="bi bi-mic-fill"></i></h1>
-            <p>Text to Speech</p>
-        </div>
-        
-        <textarea class="input-field" id="textInput" placeholder="Enter Burmese text to speak..."></textarea>
-        
-        <button class="btn-gold mt-2" id="speakBtn" onclick="const t=document.getElementById('textInput').value.trim();if(t){document.getElementById('waveform').classList.remove('hidden');fetch('https://amkyawdev-burmeai-space-backend.hf.space/api/speak',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t})}).then(r=>r.json()).then(d=>{if(d.audio){document.getElementById('audio').src=d.audio;document.getElementById('audioPlayer').classList.remove('hidden');document.getElementById('audio').play();}else{alert('Error');}}).catch(e=>alert('Error: '+e.message));document.getElementById('waveform').classList.add('hidden');}" style="width:100%;">
-            <i class="bi bi-play-fill" id="speakIcon"></i>
-            <span id="speakText">Speak</span>
-        </button>
-        
-        <div class="waveform-container hidden" id="waveform">
-            <div class="waveform-bars">
-                <span></span><span></span><span></span><span></span><span></span>
+    <!-- Page Header -->
+    <div class="speak-page-header">
+        <h1><i class="bi bi-mic-fill"></i> Text to Speech</h1>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="speak-wrapper">
+        <div class="speak-content">
+            <!-- Text Input Card -->
+            <div class="speak-card">
+                <label class="speak-label"><i class="bi bi-pencil"></i> Enter Text</label>
+                <textarea class="speak-textarea" id="textInput" placeholder="ဤနေရာတွင် မြန်မာစာ သို့မဟုတ် အင်္ဂလိပ်စာ ရိုက်ထည့်ပါ..."></textarea>
+                <div class="char-count"><span id="charCount">0</span> / 500 characters</div>
             </div>
-            <p class="waveform-text">Generating audio...</p>
-        </div>
-        
-        <div class="audio-player hidden" id="audioPlayer">
-            <audio id="audio" controls></audio>
-            <button class="btn-outline mt-2" id="downloadBtn" style="width:100%;">
-                <i class="bi bi-download"></i> Download
+            
+            <!-- Settings Card -->
+            <div class="speak-card settings-card">
+                <div class="setting-item">
+                    <label><i class="bi bi-speedometer2"></i> Speed</label>
+                    <div class="speed-control">
+                        <button class="speed-btn" onclick="changeSpeed(-0.25)">-</button>
+                        <span id="speedValue">1.0x</span>
+                        <button class="speed-btn" onclick="changeSpeed(0.25)">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Speak Button -->
+            <button class="speak-btn" id="speakBtn" onclick="generateSpeech()">
+                <i class="bi bi-play-fill"></i>
+                <span>Generate Speech</span>
             </button>
+            
+            <!-- Loading Animation -->
+            <div class="speak-loading hidden" id="loading">
+                <div class="loading-spinner"></div>
+                <p>Generating audio...</p>
+            </div>
+            
+            <!-- Audio Player Card -->
+            <div class="speak-card audio-card hidden" id="audioCard">
+                <div class="audio-header">
+                    <i class="bi bi-music-note-beamed"></i>
+                    <span>Your Audio</span>
+                </div>
+                <audio id="audio" controls></audio>
+                <div class="audio-actions">
+                    <button class="audio-btn" onclick="playAudio()">
+                        <i class="bi bi-play-circle"></i> Play
+                    </button>
+                    <button class="audio-btn" onclick="pauseAudio()">
+                        <i class="bi bi-pause-circle"></i> Pause
+                    </button>
+                    <button class="audio-btn download" onclick="downloadAudio()">
+                        <i class="bi bi-download"></i> Download
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     
     <script>
     const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space";
+    let speed = 1.0;
     
-    // Menu functions
-    function toggleMenu() {
-        document.getElementById("sideNav").classList.toggle("open");
-        document.getElementById("sideNavOverlay").classList.toggle("open");
-    }
-    function closeMenu() {
-        document.getElementById("sideNav").classList.remove("open");
-        document.getElementById("sideNavOverlay").classList.remove("open");
-    }
-    
-    // Create particles
+    // Particles
     for (let i = 0; i < 15; i++) {
-        const p = document.createElement("div");
-        p.className = "particle";
-        p.style.left = Math.random() * 100 + "%";
-        p.style.top = Math.random() * 100 + "%";
-        p.style.animationDelay = Math.random() * 8 + "s";
-        document.getElementById("particles").appendChild(p);
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 8 + 's';
+        document.getElementById('particles').appendChild(p);
     }
     
-    // Elements
-    const textInput = document.getElementById("textInput");
-    const speakBtn = document.getElementById("speakBtn");
-    const speakIcon = document.getElementById("speakIcon");
-    const waveform = document.getElementById("waveform");
-    const audioPlayer = document.getElementById("audioPlayer");
-    const audio = document.getElementById("audio");
-    const downloadBtn = document.getElementById("downloadBtn");
+    // Char count
+    document.getElementById('textInput').addEventListener('input', function() {
+        document.getElementById('charCount').textContent = this.value.length;
+    });
     
-    async function generateSpeech() {
-        const text = textInput.value.trim();
+    // Speed control
+    function changeSpeed(delta) {
+        speed = Math.max(0.5, Math.min(2.0, speed + delta));
+        document.getElementById('speedValue').textContent = speed.toFixed(1) + 'x';
+    }
+    
+    // Generate speech
+    function generateSpeech() {
+        const text = document.getElementById('textInput').value.trim();
         if (!text) {
-            alert("Please enter some text");
+            alert('Please enter some text');
             return;
         }
         
-        speakBtn.disabled = true;
-        waveform.classList.remove("hidden");
-        audioPlayer.classList.add("hidden");
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('audioCard').classList.add('hidden');
+        document.getElementById('speakBtn').disabled = true;
         
-        try {
-            const res = await fetch(API_URL + "/api/speak", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: text })
-            });
-            
-            const data = await res.json();
-            
-            if (data.audio) {
-                audio.src = data.audio;
-                audioPlayer.classList.remove("hidden");
-                audio.play();
+        fetch(API_URL + '/api/speak', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({text: text, speed: speed})
+        })
+        .then(r => r.json())
+        .then(d => {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('speakBtn').disabled = false;
+            if (d.audio) {
+                document.getElementById('audio').src = d.audio;
+                document.getElementById('audioCard').classList.remove('hidden');
+                document.getElementById('audio').play();
             } else {
-                alert("Could not generate audio. Please try again.");
+                alert('Could not generate audio. Please try again.');
             }
-        } catch (e) {
-            alert("Error: " + e.message);
-        }
-        
-        speakBtn.disabled = false;
-        waveform.classList.add("hidden");
+        })
+        .catch(e => {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('speakBtn').disabled = false;
+            alert('Error: ' + e.message);
+        });
     }
     
-    downloadBtn.addEventListener("click", function() {
-        const a = document.createElement("a");
-        a.href = audio.src;
-        a.download = "burmese-speech.wav";
+    function playAudio() { document.getElementById('audio').play(); }
+    function pauseAudio() { document.getElementById('audio').pause(); }
+    function downloadAudio() {
+        const a = document.createElement('a');
+        a.href = document.getElementById('audio').src;
+        a.download = 'burmese-speech.wav';
         a.click();
-    });
+    }
     </script>
 </body>
 </html>
