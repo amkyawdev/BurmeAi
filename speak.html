@@ -11,12 +11,12 @@
     <div class="floating-particles" id="particles"></div>
     
     <!-- Hamburger Menu Button -->
-    <button class="hamburger-menu" id="hamburgerBtn">
+    <button class="hamburger-menu" id="hamburgerBtn" onclick="toggleMenu()">
         <i class="bi bi-list"></i>
     </button>
     
     <!-- Side Nav Overlay -->
-    <div class="side-nav-overlay" id="sideNavOverlay"></div>
+    <div class="side-nav-overlay" id="sideNavOverlay" onclick="closeMenu()"></div>
     
     <!-- Side Navigation -->
     <nav class="side-nav" id="sideNav">
@@ -35,7 +35,7 @@
         
         <textarea class="input-field" id="textInput" placeholder="Enter Burmese text to speak..."></textarea>
         
-        <button class="btn-gold mt-2" id="speakBtn" style="width:100%;">
+        <button class="btn-gold mt-2" id="speakBtn" onclick="generateSpeech()" style="width:100%;">
             <i class="bi bi-play-fill" id="speakIcon"></i>
             <span id="speakText">Speak</span>
         </button>
@@ -58,6 +58,16 @@
     <script>
     const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space";
     
+    // Menu functions
+    function toggleMenu() {
+        document.getElementById("sideNav").classList.toggle("open");
+        document.getElementById("sideNavOverlay").classList.toggle("open");
+    }
+    function closeMenu() {
+        document.getElementById("sideNav").classList.remove("open");
+        document.getElementById("sideNavOverlay").classList.remove("open");
+    }
+    
     // Create particles
     for (let i = 0; i < 15; i++) {
         const p = document.createElement("div");
@@ -67,23 +77,6 @@
         p.style.animationDelay = Math.random() * 8 + "s";
         document.getElementById("particles").appendChild(p);
     }
-    
-    // Hamburger Menu Toggle
-    const hamburgerBtn = document.getElementById("hamburgerBtn");
-    const sideNav = document.getElementById("sideNav");
-    const sideNavOverlay = document.getElementById("sideNavOverlay");
-    
-    hamburgerBtn.addEventListener("click", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        sideNav.classList.toggle("open");
-        sideNavOverlay.classList.toggle("open");
-    });
-    
-    sideNavOverlay.addEventListener("click", function() {
-        sideNav.classList.remove("open");
-        sideNavOverlay.classList.remove("open");
-    });
     
     // Elements
     const textInput = document.getElementById("textInput");
@@ -128,8 +121,6 @@
         speakBtn.disabled = false;
         waveform.classList.add("hidden");
     }
-    
-    speakBtn.addEventListener("click", generateSpeech);
     
     downloadBtn.addEventListener("click", function() {
         const a = document.createElement("a");
