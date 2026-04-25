@@ -8,17 +8,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="bg-gradient">
+    <!-- Floating Particles -->
     <div class="floating-particles" id="particles"></div>
     
-    <!-- Hamburger Menu Button -->
-    <button class="hamburger-menu" id="hamburgerBtn">
-        <i class="bi bi-list"></i>
-    </button>
-    
-    <!-- Side Nav Overlay -->
+    <!-- Hamburger Menu -->
+    <button class="hamburger-menu" id="hamburgerBtn"><i class="bi bi-list"></i></button>
     <div class="side-nav-overlay" id="sideNavOverlay"></div>
-    
-    <!-- Side Navigation -->
     <nav class="side-nav" id="sideNav">
         <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
         <a href="chat.html" class="side-nav-item active"><i class="bi bi-chat-dots-fill"></i><span>Chat</span></a>
@@ -27,97 +22,69 @@
         <a href="about.html" class="side-nav-item"><i class="bi bi-person-fill"></i><span>About</span></a>
     </nav>
     
+    <!-- Thanking Animation -->
     <div class="thanking-animation" id="thankingAnimation">
         <i class="bi bi-heart-fill"></i>
         <p style="margin-top:12px;color:var(--soft-gold);font-size:14px;">Thank you!</p>
     </div>
     
-    <div class="container" style="padding-top:60px;padding-bottom:80px;">
-        <div class="page-header"><h1 style="color:var(--soft-gold);"><i class="bi bi-chat-dots-fill"></i></h1><p>Chat with AI</p></div>
-        
-        <!-- Chat History -->
-        <div class="chat-container" id="chatContainer"></div>
-        
-        <!-- Input Area -->
-        <div class="input-area">
-            <input type="text" class="input-field" id="messageInput" placeholder="Type a message...">
-            <button class="btn-gold" id="sendBtn">
-                <i class="bi bi-send-fill"></i>
-            </button>
+    <!-- Page Header -->
+    <div class="chat-page-header">
+        <h1><i class="bi bi-chat-dots-fill"></i> Chat</h1>
+    </div>
+    
+    <!-- Chat Area -->
+    <div class="chat-wrapper">
+        <div class="chat-messages" id="chatContainer">
+            <div class="chat-bubble ai"><i class="bi bi-robot"></i> Hello! I'm your AI assistant. How can I help?</div>
         </div>
     </div>
     
+    <!-- Input Area -->
+    <div class="chat-input-area">
+        <input type="text" class="input-field" id="messageInput" placeholder="Type a message...">
+        <button class="btn-gold" id="sendBtn"><i class="bi bi-send-fill"></i></button>
+    </div>
+    
     <script>
-    // Configuration
+    // Config
     const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space";
     const STORAGE_KEY = "burmeai_chat_history";
     
-    // DOM Elements
-    const hamburgerBtn = document.getElementById("hamburgerBtn");
-    const sideNav = document.getElementById("sideNav");
-    const sideNavOverlay = document.getElementById("sideNavOverlay");
-    const chatContainer = document.getElementById("chatContainer");
-    const messageInput = document.getElementById("messageInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const thankingAnimation = document.getElementById("thankingAnimation");
-    
-    // Create particles
+    // Particles
     for (let i = 0; i < 15; i++) {
-        const p = document.createElement("div");
-        p.className = "particle";
-        p.style.left = Math.random() * 100 + "%";
-        p.style.top = Math.random() * 100 + "%";
-        p.style.animationDelay = Math.random() * 8 + "s";
-        document.getElementById("particles").appendChild(p);
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 8 + 's';
+        document.getElementById('particles').appendChild(p);
     }
     
-    // Hamburger Menu Toggle
-    hamburgerBtn.addEventListener("click", function(e) {
+    // Menu
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const sideNav = document.getElementById('sideNav');
+    const sideNavOverlay = document.getElementById('sideNavOverlay');
+    hamburgerBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        e.stopPropagation();
-        sideNav.classList.toggle("open");
-        sideNavOverlay.classList.toggle("open");
+        sideNav.classList.toggle('open');
+        sideNavOverlay.classList.toggle('open');
+    });
+    sideNavOverlay.addEventListener('click', function() {
+        sideNav.classList.remove('open');
+        sideNavOverlay.classList.remove('open');
     });
     
-    // Close menu when clicking overlay
-    sideNavOverlay.addEventListener("click", function() {
-        sideNav.classList.remove("open");
-        sideNavOverlay.classList.remove("open");
-    });
+    // Chat Elements
+    const chatContainer = document.getElementById('chatContainer');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const thankingAnimation = document.getElementById('thankingAnimation');
     
-    // Load Chat History from localStorage
-    function loadChatHistory() {
-        const history = localStorage.getItem(STORAGE_KEY);
-        if (history) {
-            const messages = JSON.parse(history);
-            messages.forEach(msg => {
-                addMessage(msg.content, msg.isUser, false);
-            });
-        } else {
-            // Default welcome message
-            addMessage("Hello! I'm your AI assistant. How can I help?", false, false);
-        }
-    }
-    
-    // Save Chat History to localStorage
-    function saveChatHistory(content, isUser) {
-        let history = [];
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            history = JSON.parse(stored);
-        }
-        history.push({ content: content, isUser: isUser, timestamp: Date.now() });
-        // Keep only last 50 messages
-        if (history.length > 50) {
-            history = history.slice(-50);
-        }
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-    }
-    
-    // Add message to chat
-    function addMessage(content, isUser, save = true) {
-        const bubble = document.createElement("div");
-        bubble.className = isUser ? "chat-bubble user" : "chat-bubble ai";
+    // Add message
+    function addMessage(content, isUser) {
+        const bubble = document.createElement('div');
+        bubble.className = isUser ? 'chat-bubble user' : 'chat-bubble ai';
         if (isUser) {
             bubble.textContent = content;
         } else {
@@ -126,53 +93,47 @@
         chatContainer.appendChild(bubble);
         chatContainer.scrollTop = chatContainer.scrollHeight;
         
-        if (save) {
-            saveChatHistory(content, isUser);
-        }
+        // Save to localStorage
+        let history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]';
+        history.push({content, isUser, time: Date.now()});
+        if (history.length > 50) history = history.slice(-50);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
     }
     
-    // Show thanking animation
+    // Thanking
     function showThanking() {
-        thankingAnimation.classList.add("show");
-        setTimeout(() => thankingAnimation.classList.remove("show"), 2000);
+        thankingAnimation.classList.add('show');
+        setTimeout(() => thankingAnimation.classList.remove('show'), 2000);
     }
     
-    // Send message
+    // Send
     async function sendMessage() {
         const msg = messageInput.value.trim();
         if (!msg) return;
-        
-        messageInput.value = "";
+        messageInput.value = '';
         addMessage(msg, true);
         sendBtn.disabled = true;
         
         try {
-            const res = await fetch(API_URL + "/api/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: msg })
+            const res = await fetch(API_URL + '/api/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: msg})
             });
             const data = await res.json();
-            addMessage(data.response || "Sorry, I could not get a response.", false);
+            addMessage(data.response || 'Sorry, I could not get a response.', false);
             showThanking();
         } catch (e) {
-            addMessage("Sorry, something went wrong. Please try again.", false);
+            addMessage('Error: ' + e.message, false);
         }
-        
         sendBtn.disabled = false;
     }
     
-    // Event Listeners
-    sendBtn.addEventListener("click", sendMessage);
-    messageInput.addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            sendMessage();
-        }
+    // Events
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
     });
-    
-    // Load history on page load
-    loadChatHistory();
     </script>
 </body>
 </html>
