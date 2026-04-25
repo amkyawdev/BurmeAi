@@ -11,7 +11,7 @@
     <div class="floating-particles" id="particles"></div>
     
     <!-- Hamburger Menu Button -->
-    <button class="hamburger-menu" id="hamburgerBtn" onclick="toggleMenu()">
+    <button class="hamburger-menu" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');">
         <i class="bi bi-list"></i>
     </button>
     
@@ -35,7 +35,7 @@
         
         <textarea class="input-field" id="textInput" placeholder="Enter Burmese text to speak..."></textarea>
         
-        <button class="btn-gold mt-2" id="speakBtn" onclick="generateSpeech()" style="width:100%;">
+        <button class="btn-gold mt-2" id="speakBtn" onclick="const t=document.getElementById('textInput').value.trim();if(t){document.getElementById('waveform').classList.remove('hidden');fetch('https://amkyawdev-burmeai-space-backend.hf.space/api/speak',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t})}).then(r=>r.json()).then(d=>{if(d.audio){document.getElementById('audio').src=d.audio;document.getElementById('audioPlayer').classList.remove('hidden');document.getElementById('audio').play();}else{alert('Error');}}).catch(e=>alert('Error: '+e.message));document.getElementById('waveform').classList.add('hidden');}" style="width:100%;">
             <i class="bi bi-play-fill" id="speakIcon"></i>
             <span id="speakText">Speak</span>
         </button>
