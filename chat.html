@@ -49,6 +49,9 @@
     <script>
     const API_URL = "https://amkyawdev-burmeai-space-backend.hf.space";
     
+    // Chat history for context
+    let chatHistory = [];
+    
     // Particles
     for (let i = 0; i < 15; i++) {
         const p = document.createElement('div');
@@ -66,6 +69,15 @@
         b.innerHTML = isUser ? content : '<i class="bi bi-robot"></i> ' + content;
         c.appendChild(b);
         c.scrollTop = c.scrollHeight;
+        
+        // Add to history
+        if (isUser) {
+            chatHistory.push({ "user": content });
+        } else {
+            if (chatHistory.length > 0) {
+                chatHistory[chatHistory.length - 1]["assistant"] = content;
+            }
+        }
     }
     
     function showHeart() {
@@ -81,10 +93,14 @@
         addMsg(m, true);
         document.getElementById('sendBtn').disabled = true;
         
+        // Send with history
         fetch(API_URL + '/api/chat', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({message: m})
+            body: JSON.stringify({
+                message: m,
+                history: chatHistory
+            })
         })
         .then(r => r.json())
         .then(d => {
