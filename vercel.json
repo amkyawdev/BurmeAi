@@ -4,12 +4,6 @@
   "outputDirectory": ".",
   "installCommand": "echo 'No dependencies to install'",
   "framework": null,
-  "env": {
-    "VERCEL_API_URL": {
-      "description": "HuggingFace Space Backend URL",
-      "value": "https://amkyawdev-burmeai-space-backend.hf.space"
-    }
-  },
   "builds": [
     {
       "src": "**/*.html",
