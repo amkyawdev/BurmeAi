@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Burme Dev Speak</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-gradient">
+    <!-- Floating Particles -->
+    <div class="floating-particles" id="particles"></div>
+    
+    <!-- Page Header -->
+    <div class="auth-page-header">
+        <h1><i class="bi bi-person-plus"></i> Register</h1>
+        <p>Create your account to get started.</p>
+    </div>
+    
+    <!-- Auth Form -->
+    <div class="auth-card">
+        <form id="registerForm" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label><i class="bi bi-person"></i> Name</label>
+                <input type="text" id="name" class="input-field" placeholder="Enter your name" required>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="bi bi-envelope"></i> Email</label>
+                <input type="email" id="email" class="input-field" placeholder="Enter your email" required>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="bi bi-key"></i> Password</label>
+                <input type="password" id="password" class="input-field" placeholder="Create a password" required minlength="6">
+            </div>
+            
+            <div class="form-group">
+                <label><i class="bi bi-key-fill"></i> Confirm Password</label>
+                <input type="password" id="confirmPassword" class="input-field" placeholder="Confirm your password" required>
+            </div>
+            
+            <div class="form-error" id="registerError"></div>
+            
+            <button type="submit" class="btn-gold btn-full" id="registerBtn">
+                <i class="bi bi-person-plus"></i> Register
+            </button>
+        </form>
+        
+        <div class="auth-links">
+            <span>Already have an account?</span>
+            <a href="login.html" class="auth-link">Login</a>
+        </div>
+        
+        <div class="auth-divider">
+            <span>or</span>
+        </div>
+        
+        <button class="btn-outline btn-full" onclick="handleGoogleRegister()">
+            <i class="bi bi-google"></i> Continue with Google
+        </button>
+    </div>
+    
+    <!-- Back to Home -->
+    <div class="auth-back">
+        <a href="index.html"><i class="bi bi-house"></i> Back to Home</a>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <i class="bi bi-check-circle"></i>
+            <p>Registration Successful!</p>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcw0_7Pc4tIAapg-Hyvk4UtiQfo1USjU8",
+            authDomain: "amk-apk.firebaseapp.com",
+            databaseURL: "https://amk-apk-default-rtdb.firebaseio.com",
+            projectId: "amk-apk",
+            storageBucket: "amk-apk.firebasestorage.app",
+            messagingSenderId: "267632318274",
+            appId: "1:267632318274:android:441e4b8cb66da60d04dadb",
+            measurementId: "G-E2658JJ29R"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const db = firebase.firestore();
+        
+        // Particles
+        for (let i = 0; i < 15; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 8 + 's';
+            document.getElementById('particles').appendChild(p);
+        }
+        
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+        
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const btn = document.getElementById('registerBtn');
+            const errorDiv = document.getElementById('registerError');
+            
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Passwords do not match!';
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-dots"><span></span><span></span><span></span></span>';
+            errorDiv.textContent = '';
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Update user profile
+                    const user = userCredential.user;
+                    user.updateProfile({
+                        displayName: name
+                    });
+                    
+                    // Save user data to Firestore
+                    db.collection('users').doc(user.uid).set({
+                        name: name,
+                        email: email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    showSuccess();
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                })
+                .catch((error) => {
+                    errorDiv.textContent = error.message;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-person-plus"></i> Register';
+                });
+        }
+        
+        function handleGoogleRegister() {
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    // Check if new user
+                    if (result.additionalUserInfo.isNewUser) {
+                        const user = result.user;
+                        db.collection('users').doc(user.uid).set({
+                            name: user.displayName,
+                            email: user.email,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                    showSuccess();
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                })
+                .catch((error) => {
+                    document.getElementById('registerError').textContent = error.message;
+                });
+        }
+        
+        function showSuccess() {
+            const modal = document.getElementById('successModal');
+            modal.classList.add('show');
+        }
+    </script>
+</body>
+</html>

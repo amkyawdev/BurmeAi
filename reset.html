@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - Burme Dev Speak</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-gradient">
+    <!-- Floating Particles -->
+    <div class="floating-particles" id="particles"></div>
+    
+    <!-- Page Header -->
+    <div class="auth-page-header">
+        <h1><i class="bi bi-key"></i> Reset Password</h1>
+        <p>Enter your email to reset your password.</p>
+    </div>
+    
+    <!-- Auth Form -->
+    <div class="auth-card">
+        <form id="resetForm" onsubmit="handleReset(event)">
+            <div class="form-group">
+                <label><i class="bi bi-envelope"></i> Email</label>
+                <input type="email" id="email" class="input-field" placeholder="Enter your email" required>
+            </div>
+            
+            <div class="form-error" id="resetError"></div>
+            <div class="form-success" id="resetSuccess"></div>
+            
+            <button type="submit" class="btn-gold btn-full" id="resetBtn">
+                <i class="bi bi-send"></i> Send Reset Link
+            </button>
+        </form>
+        
+        <div class="auth-links">
+            <span>Remember your password?</span>
+            <a href="login.html" class="auth-link">Login</a>
+        </div>
+    </div>
+    
+    <!-- Back to Home -->
+    <div class="auth-back">
+        <a href="index.html"><i class="bi bi-house"></i> Back to Home</a>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <i class="bi bi-check-circle"></i>
+            <p>Reset Link Sent!</p>
+            <span class="modal-sub">Check your email for further instructions.</span>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcw0_7Pc4tIAapg-Hyvk4UtiQfo1USjU8",
+            authDomain: "amk-apk.firebaseapp.com",
+            databaseURL: "https://amk-apk-default-rtdb.firebaseio.com",
+            projectId: "amk-apk",
+            storageBucket: "amk-apk.firebasestorage.app",
+            messagingSenderId: "267632318274",
+            appId: "1:267632318274:android:441e4b8cb66da60d04dadb",
+            measurementId: "G-E2658JJ29R"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        
+        // Particles
+        for (let i = 0; i < 15; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 8 + 's';
+            document.getElementById('particles').appendChild(p);
+        }
+        
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+        
+        function handleReset(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const btn = document.getElementById('resetBtn');
+            const errorDiv = document.getElementById('resetError');
+            const successDiv = document.getElementById('resetSuccess');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-dots"><span></span><span></span><span></span></span>';
+            errorDiv.textContent = '';
+            successDiv.textContent = '';
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    successDiv.textContent = 'Password reset link sent! Check your email.';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-send"></i> Send Reset Link';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 3000);
+                })
+                .catch((error) => {
+                    errorDiv.textContent = error.message;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-send"></i> Send Reset Link';
+                });
+        }
+    </script>
+</body>
+</html>
