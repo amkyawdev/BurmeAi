@@ -12,7 +12,7 @@
     <div class="floating-particles" id="particles"></div>
     
     <!-- Hamburger Menu -->
-    <button class="hamburger-menu" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');"><i class="bi bi-list"></i></button>
+    <button class="hamburger-menu hamburger-menu-right" id="hamburgerBtn" onclick="document.getElementById('sideNav').classList.toggle('open');document.getElementById('sideNavOverlay').classList.toggle('open');"><i class="bi bi-list"></i></button>
     <div class="side-nav-overlay" id="sideNavOverlay" onclick="document.getElementById('sideNav').classList.remove('open');this.classList.remove('open');"></div>
     <nav class="side-nav" id="sideNav">
         <a href="index.html" class="side-nav-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
@@ -34,7 +34,7 @@
     </div>
     
     <!-- Chat Area -->
-    <div class="chat-wrapper">
+    <div class="chat-wrapper" id="chatWrapper">
         <div class="chat-messages" id="chatContainer">
             <div class="chat-bubble ai"><i class="bi bi-robot"></i> Hello! I'm your AI assistant. How can I help?</div>
         </div>
@@ -42,6 +42,8 @@
     
     <!-- Input Area -->
     <div class="chat-input-area">
+        <label class="upload-btn" for="fileInput"><i class="bi bi-paperclip"></i></label>
+        <input type="file" id="fileInput" hidden>
         <input type="text" class="input-field" id="messageInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()">
         <button class="btn-gold" id="sendBtn" onclick="sendMsg()"><i class="bi bi-send-fill"></i></button>
     </div>
@@ -64,11 +66,16 @@
     
     function addMsg(content, isUser) {
         const c = document.getElementById('chatContainer');
+        const w = document.getElementById('chatWrapper');
         const b = document.createElement('div');
         b.className = isUser ? 'chat-bubble user' : 'chat-bubble ai';
         b.innerHTML = isUser ? content : '<i class="bi bi-robot"></i> ' + content;
         c.appendChild(b);
-        c.scrollTop = c.scrollHeight;
+        
+        // Auto scroll to bottom
+        setTimeout(() => {
+            w.scrollTop = w.scrollHeight;
+        }, 10);
         
         // Add to history
         if (isUser) {
